@@ -45,7 +45,7 @@ impl Provider {
         if let Some(redirect) = self.get_redirection(url.as_str())? {
             let url = repeatedly_urldecode(redirect)?;
             return Ok(Url::from_str(&url)?);
-        };
+        }
         let mut url = Cow::Borrowed(url.as_str());
         for r in &self.raw_rules {
             match r.replace_all(&url, "") {
@@ -109,7 +109,7 @@ fn serialize_params<'a>(
     let first2: Vec<_> = params.by_ref().take(2).collect();
     let ret = match &first2[..] {
         [] => String::new(),
-        [anchor] if anchor.1 == "" => anchor.0.clone().into_owned(),
+        [anchor] if anchor.1.is_empty() => anchor.0.clone().into_owned(),
         _ => form_urlencoded::Serializer::new(String::new())
             .extend_pairs(first2)
             .extend_pairs(params)
@@ -139,7 +139,11 @@ fn repeatedly_urldecode(s: &str) -> Result<Cow<'_, str>, Error> {
 }
 
 fn is_full_match(regex: &Regex, haystack: &str) -> bool {
-    regex
-        .find(haystack)
-        .is_some_and(|m| m.len() == haystack.len())
+    let found = regex
+        .find(haystack);
+    #[allow(clippy::option_if_let_else)]
+    match found {
+        Some(m) => m.len() == haystack.len(),
+        None => false,
+    }
 }

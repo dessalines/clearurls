@@ -1,5 +1,8 @@
 // Rustc lints
 #![forbid(unsafe_code)]
+#![warn(elided_lifetimes_in_associated_constant)]
+#![warn(elided_lifetimes_in_path)]
+#![warn(elided_lifetimes_in_paths)]
 #![warn(future_incompatible)]
 #![warn(keyword_idents)]
 #![warn(let_underscore)]
@@ -51,6 +54,7 @@
 #![no_std]
 #![cfg_attr(docsrs, feature(doc_cfg, doc_auto_cfg))]
 
+#![allow(clippy::doc_markdown)]
 //! This crate provides a solution to remove tracking parameters and other nuisance from URLs.
 //!
 //! In order to detect such parameters, this crates uses crowdsourced *Rules* from the
@@ -329,7 +333,7 @@ impl UrlCleaner {
         doc.walk_mut(|node, _| {
             if let Err(e) = callback(self, node) {
                 result.push(e);
-            };
+            }
         });
 
         if result.is_empty() {
